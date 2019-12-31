@@ -60,5 +60,5 @@ def animate(i):
 ani = animation.FuncAnimation(
     fig, animate, frames=nframes, interval=16 )
 
-ani.save("dragon.mp4")
+#ani.save("dragon.mp4")
 plt.show()
