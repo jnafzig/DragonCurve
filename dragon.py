@@ -6,12 +6,36 @@ def f1(z):
 def f2(z):
     return 1-(1-1j)*z/2
 
-def dragon(level):
+def area(z):
+    z = np.array(z)
+    return sum(z.imag*np.roll(z.real,1) - z.real*np.roll(z.imag,1))
+
+def remove_repeated(z):
+    c = []
+    i = 0
+    while i < len(z):
+        n = np.where(z[i+1:] == z[i])
+        if len(n[0]) > 0 and area(z[i:i+n[0][0]+2]) == 0:
+            i += n[0][0] + 1
+        else:
+            c.append(z[i])
+            i += 1
+    return np.array(c)
+
+def shift(z):
+    i = z.index(1)
+    return z[i:] + z[:i] + [1]
+
+def dragon(level, initial=np.array([0,1])):
     if level == 0:
-        return np.array([0,1])
+        return initial 
     else:
-        curve = dragon(level - 1)
-        return np.array([f1(x) for x in curve] + [f2(x) for x in reversed(curve[:-1])])
+        curve = dragon(level-1, initial=initial) 
+        #reverse = reversed(curve[:-1])
+        reverse = curve
+        curve = [f1(x) for x in curve] + [f2(x) for x in reverse]
+        curve = shift(curve)
+        return np.array(curve)
 
 def interpolate(x, num_points=19):
     return np.concatenate([np.linspace(x1, x2, num_points, endpoint=False) 
